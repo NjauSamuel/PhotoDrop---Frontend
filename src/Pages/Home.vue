@@ -1,11 +1,9 @@
 <script setup>
-    import GuestLayout from '@/Components/GuestLayout.vue';
+    import logo from '@/assets/images/pd_logo.png';
 </script>
 
 <template>
-    <GuestLayout>
-        Home
-    </GuestLayout>
+    Living Room
 </template>
 
 <style scoped></style>

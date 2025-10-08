@@ -3,9 +3,7 @@
 </script>
 
 <template>
-    <GuestLayout>
-        My Images
-    </GuestLayout>
+   My Images
 </template>
 
 <style scoped></style>
