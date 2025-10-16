@@ -3,10 +3,12 @@
     import logo from '@/assets/images/pd_logo.png';
     import axiosClient from '@/axios';
     import router from '@/router';
-    import { ref } from 'vue'
+    import { computed, ref } from 'vue'
     import { ArrowRightOnRectangleIcon as HeroIconLogout } from '@heroicons/vue/24/solid'
+    import useUserStore from '@/store/user';
 
-    const user = ref(JSON.parse(localStorage.getItem('user')) || null)
+    const userStore = useUserStore();
+    const user = computed(() => userStore.user)
     const isLoggedIn = ref(!!user.value)
 
     function logout() {

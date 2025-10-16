@@ -10,12 +10,18 @@
         password: '',
     })
 
+    const errorMessage = ref('')
+
     function submit(){
         axiosClient.get('/sanctum/csrf-cookie').then(response => {
             // Login...
             axiosClient.post("/login", data.value)
                 .then(response => {
                     router.push({name: 'Home'})
+                })
+                .catch(error => {
+                    console.log(error.response)
+                    errorMessage.value = error.response.data.message;
                 })
         });
     }
@@ -32,6 +38,8 @@
               <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                   Sign in to your account
               </h1>
+
+              <div v-if="errorMessage" class="py-2 px-3 rounded text-red-500 text-xs">{{ errorMessage }}</div>
               <form @submit.prevent="submit" class="space-y-4 md:space-y-6">
                   <div>
                       <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>

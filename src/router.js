@@ -6,6 +6,7 @@ import Signup from "./Pages/Signup.vue";
 import DefaultLayout from "./Components/DefaultLayout.vue";
 import NotFound from "./Pages/NotFound.vue";
 import ForgotPassword from "./Pages/ForgotPassword.vue";
+import useUserStore from "./store/user";
 
 const routes = [
     {
@@ -14,7 +15,16 @@ const routes = [
         children: [
             { path: '/', name: 'Home', component: Home },
             { path: '/images', name: 'MyImages', component: MyImages },
-        ]
+        ],
+        beforeEnter: async (to, from, next) => {
+            try {
+                const userStore = useUserStore();
+                await userStore.fetchUser();
+                next();
+            } catch (error) {
+                next(false);
+            }
+        }
     },
     {
         path: '/login',
