@@ -1,6 +1,22 @@
 <script setup>
     import { RouterView } from 'vue-router';
     import logo from '@/assets/images/pd_logo.png';
+    import axiosClient from '@/axios';
+    import router from '@/router';
+    import { ref } from 'vue'
+    import { ArrowRightOnRectangleIcon as HeroIconLogout } from '@heroicons/vue/24/solid'
+
+    const user = ref(JSON.parse(localStorage.getItem('user')) || null)
+    const isLoggedIn = ref(!!user.value)
+
+    function logout() {
+        axiosClient.post('/logout')
+            .then(() => {
+                localStorage.removeItem('user')
+                isLoggedIn.value = false
+                router.push({ name: "Login" })
+            })
+    }
 
 </script>
 
@@ -13,8 +29,21 @@
                 <img :src="logo" class="mr-3 h-6 sm:h-12" alt="Logo" />
             </RouterLink>
             <div class="flex items-center lg:order-2">
-                <RouterLink :to="{ name: 'Login' }" class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Log in</RouterLink>
-                <RouterLink :to="{ name: 'Signup' }" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">Get started</RouterLink>
+                <!-- When NOT logged in -->
+                <template v-if="!isLoggedIn">
+                    <RouterLink :to="{ name: 'Login' }" class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Log in</RouterLink>
+                    <RouterLink :to="{ name: 'Signup' }" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">Get started</RouterLink>                
+                </template>
+
+                <template v-else>
+                    <button @click="logout" class="flex items-center text-gray-800 dark:text-white bg-gray-50 hover:bg-gray-200 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"><HeroIconLogout class="w-5 h-5 mr-1" /> Log Out</button>
+                    
+                    <div class="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+                        <span class="font-medium text-gray-600 dark:text-gray-300">JL</span>
+                    </div>
+
+                </template>
+
                 <button data-collapse-toggle="mobile-menu-2" type="button" class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="mobile-menu-2" aria-expanded="false">
                     <span class="sr-only">Open main menu</span>
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
