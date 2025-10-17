@@ -6,10 +6,39 @@
     import { computed, ref } from 'vue'
     import { ArrowRightOnRectangleIcon as HeroIconLogout } from '@heroicons/vue/24/solid'
     import useUserStore from '@/store/user';
+    import { onMounted } from 'vue'
+    import { initCollapses } from 'flowbite'
+
+    // initialize components based on data attribute selectors
+    onMounted(() => {
+        initCollapses();
+    })
 
     const userStore = useUserStore();
     const user = computed(() => userStore.user)
     const isLoggedIn = ref(!!user.value)
+
+    // The User Initials
+    const userInitials = computed(() => {
+        if (!user.value || !user.value.name) return ''
+
+        // Clean and split the name
+        const parts = user.value.name
+            .trim()
+            .split(' ')
+            .filter(p => p.length > 0)
+
+        if (parts.length === 1) {
+            // Single name → first two letters (e.g., "Prince" → "PR")
+            return parts[0].substring(0, 2).toUpperCase()
+        }
+
+        // More than one name → first letter of first and last name
+        const first = parts[0].charAt(0).toUpperCase()
+        const last = parts[parts.length - 1].charAt(0).toUpperCase()
+        return `${first}${last}`
+    })
+
 
     function logout() {
         axiosClient.post('/logout')
@@ -37,11 +66,12 @@
                     <RouterLink :to="{ name: 'Signup' }" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">Get started</RouterLink>                
                 </template>
 
+                <!-- When logged in -->
                 <template v-else>
                     <button @click="logout" class="flex items-center text-gray-800 dark:text-white bg-gray-50 hover:bg-gray-200 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"><HeroIconLogout class="w-5 h-5 mr-1" /> Log Out</button>
                     
                     <div class="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
-                        <span class="font-medium text-gray-600 dark:text-gray-300">JL</span>
+                        <span class="font-medium text-gray-600 dark:text-gray-300">{{ userInitials }}</span>
                     </div>
 
                 </template>
