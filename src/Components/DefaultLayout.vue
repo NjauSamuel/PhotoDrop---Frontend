@@ -71,7 +71,7 @@
                     <button @click="logout" class="flex items-center text-gray-800 dark:text-white bg-gray-50 hover:bg-gray-200 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"><HeroIconLogout class="w-5 h-5 mr-1" /> Log Out</button>
                     
                     <div class="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
-                        <span class="font-medium text-gray-600 dark:text-gray-300">{{ userInitials }}</span>
+                        <span class="font-medium text-primary-600 dark:text-primary-300">{{ userInitials }}</span>
                     </div>
 
                 </template>
