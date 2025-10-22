@@ -4,9 +4,51 @@
   import { onMounted, ref, nextTick } from 'vue';
   import { initTooltips } from 'flowbite'
   import { RouterLink } from 'vue-router'
+  import { DocumentDuplicateIcon, TrashIcon } from '@heroicons/vue/24/solid'
+  import Swal from 'sweetalert2'
+
 
   const images = ref([]);
   const showWelcome = ref(false); // <-- flag for new users
+
+  function copyUrl(url) {
+    navigator.clipboard.writeText(url)
+  }
+
+  function deleteImage(id, label) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: `You’re about to delete the image "${label}". This action cannot be undone!`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axiosClient.delete(`/api/image/${id}`)
+          images.value = images.value.filter(img => img.id !== id)
+
+          Swal.fire({
+            title: "Deleted!",
+            text: `"${label}" has been removed successfully.`,
+            icon: "success",
+            timer: 1500,
+            showConfirmButton: false
+          })
+        } catch (error) {
+          console.error("Delete failed:", error)
+          Swal.fire({
+            title: "Error!",
+            text: "Something went wrong while deleting the image.",
+            icon: "error"
+          })
+        }
+      }
+    })
+  }
+
 
   const defaultImages = [
     { id: 1, label: 'Nature', url: 'https://flowbite.s3.amazonaws.com/docs/gallery/masonry/image.jpg', description: 'Peaceful green landscape.' },
@@ -82,6 +124,12 @@
           :alt="image.label"
           class="w-full h-auto rounded-lg transition-transform duration-300 group-hover:scale-105"
         />
+
+        <!-- Action buttons -->
+        <div v-if="!showWelcome" class="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button @click="copyUrl(image.url)" type="button" class="p-2 text-blue-600 bg-blue-100 rounded-full hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400" title="Copy image URL"><DocumentDuplicateIcon class="w-4 h-4" /></button>
+          <button @click="deleteImage(image.id, image.label)" type="button" class="p-2 text-red-600 bg-red-100 rounded-full hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-400" title="Delete image"><TrashIcon class="w-4 h-4" /></button>
+        </div>
         <!-- Overlay label -->
         <div
           class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-2 text-sm text-white"
