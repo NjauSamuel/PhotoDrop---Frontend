@@ -1,17 +1,26 @@
 <script setup>
 
   import axiosClient from '@/axios';
-  import { onMounted, ref } from 'vue';
+  import { onMounted, ref, nextTick } from 'vue';
+  import { initTooltips } from 'flowbite'
 
   const images = ref([]);
 
-  onMounted(() => {
-    axiosClient.get('/api/image')
-    .then((response) => {
-      console.log(response.data);
-      images.value = response.data;
-    })
-  })
+  onMounted(async () => {
+  try {
+    const response = await axiosClient.get('/api/image')
+    images.value = response.data
+
+    // Wait for Vue to finish rendering the new images
+    await nextTick()
+
+    // Now initialize Flowbite tooltips
+    initTooltips()
+  } catch (error) {
+    console.error('Error loading images:', error)
+  }
+})
+  console.log(images);
 
   // Default example images
 
@@ -39,7 +48,8 @@
       <div
         v-for="image in images"
         :key="image.id"
-        class="mb-4 break-inside-avoid relative group overflow-hidden rounded-lg"
+        v-bind="image.description ? { 'data-tooltip-target': `tooltip-${image.id}` } : {}"
+        class="mb-4 break-inside-avoid relative group overflow-visible rounded-lg"
       >
         <img
           :src="image.url"
@@ -52,17 +62,17 @@
         >
           {{ image.label }}
         </div>
+
+        <div v-if="image.description" :id="`tooltip-${image.id}`" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
+            {{ image.description }}
+            <div class="tooltip-arrow" data-popper-arrow></div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-  /* Optional: Add subtle hover effect */
-  .group:hover img {
-    transform: scale(1.05);
-  }
-
   .break-inside-avoid {
     break-inside: avoid;
   }

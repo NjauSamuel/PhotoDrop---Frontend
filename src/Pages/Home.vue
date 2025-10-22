@@ -20,6 +20,7 @@
         const formData = new FormData()
         formData.append('image', data.value.image)
         formData.append('label', data.value.label)
+        formData.append('description', data.value.description)
         axiosClient.post('/api/image', formData)
             .then(response => {
                 router.push({name: 'MyImages'})
